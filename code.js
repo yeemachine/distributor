@@ -84,22 +84,28 @@ let init = () => {
                     });
                 });
                 nodesSorted.sort(compareValues(msg.config.axis));
-                nodesSorted.forEach((e, i) => {
-                    let nodeBoundingDim = (msg.config.axis === 'x') ? e.width : e.height;
-                    if (i === 0) {
-                        let startCoor = e[msg.config.axis];
-                        counter += startCoor + (nodeBoundingDim * ifCenter) + msg.config.amount;
-                    }
-                    else {
-                        e.node[msg.config.axis] = counter + e.offset[msg.config.axis];
-                        counter += msg.config.amount + (nodeBoundingDim * ifCenter);
-                    }
-                });
+                if (nodesSorted.length > 0) {
+                    nodesSorted.forEach((e, i) => {
+                        let nodeBoundingDim = (msg.config.axis === 'x') ? e.width : e.height;
+                        if (i === 0) {
+                            let startCoor = e[msg.config.axis];
+                            counter += startCoor + (nodeBoundingDim * ifCenter) + msg.config.amount;
+                        }
+                        else {
+                            e.node[msg.config.axis] = counter + e.offset[msg.config.axis];
+                            counter += msg.config.amount + (nodeBoundingDim * ifCenter);
+                        }
+                    });
+                }
+                else {
+                    figma.notify('Select multiple items to distribute.');
+                }
             }
             figma.closePlugin();
         };
     }
     else {
+        figma.notify('Select multiple items to distribute.');
         figma.closePlugin();
     }
 };
