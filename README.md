@@ -1,2 +1,2 @@
-# distribute-by
+# Distribute By
 A distributor plugin for Figma
