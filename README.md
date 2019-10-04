@@ -1,1 +1,1 @@
-#Distribute By, Plugin for Figma
+# **Distribute By**: A plugin for Figma
