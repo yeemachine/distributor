@@ -1,8 +1,8 @@
 # **Distributor**: A plugin for Figma
 ![Image of Plugin UI](https://yeemachine.github.io/distributor/Cover.png)
 
-A lightweight plugin that spaces elements evenly by the pixel. 
-Distribute items vertically or horizontally from the edges or the centers.
-It works with rotated elements as well, distributing evenly using the bounding box as reference.
+A lightweight plugin that spaces elements evenly by exact pixel measurements.
+ 
+You can space items vertically or horizontally from their edges or their centers. Alignment options also let you choose which side the items should be distributed towards. Elements are repositioned by their bounding boxes, making it possible to distribute rotated items as well.
 
 [Install the Plugin](https://www.figma.com/c/plugin/761098431161143653/Distributor)
