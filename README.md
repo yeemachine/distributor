@@ -1,5 +1,5 @@
 # **Distributor**: A plugin for Figma
-![Image of Plugin UI](https://yeemachine.github.io/distributor/Cover.png)
+![Image of Plugin UI](https://yeemachine.github.io/distributor/Cover.gif)
 
 A lightweight plugin that spaces elements evenly by exact pixel measurements.
  
