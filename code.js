@@ -63,7 +63,7 @@ function getRectFourPoints(x, y, width, height, ang) {
             figma.ui.postMessage(res);
         });
         // Render UI
-        figma.showUI(__html__, { width: 184, height: 252 });
+        figma.showUI(__html__, { width: 190, height: 268 });
         // Executes when user submits input
         figma.ui.onmessage = (msg) => {
             if (msg.type === 'distribute-submit') {
