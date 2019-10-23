@@ -286,7 +286,7 @@
       flex-shrink: 0;
   height: 30px;
   margin: 1px 0 1px 0;
-  padding: 5px 16px 5px 16px;
+  padding: 5px 8px 5px 8px;
   text-decoration: none;
   border: 2px solid transparent;
   border-radius: 6px;
@@ -393,7 +393,7 @@
   margin: 1px 0 1px 0;
   padding: 8px 4px 8px 7px;
   color: rgba(0, 0, 0, 0.8);
-  border: 1px solid transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 2px;
   outline: none;
   background-color: #ffffff;
@@ -987,7 +987,7 @@
   display: block;
   width: 10px;
   height: 10px;
-  margin: 2px 10px 0 10px;
+  margin: 2px 8px 0 8px;
   content: '';
   border: 1px solid rgba(0, 0, 0, 0.8);
   border-radius: 2px;
@@ -1287,19 +1287,19 @@
 }
 
 .icon--selected {
-  color: #ffffff;
+  color: #fff;
   border: 1px solid transparent;
   background-color: #18a0fb;
   background-position: -1px -97px;
 }
 
 .icon--selected:hover {
-  color: #ffffff;
+  color: #fff;
   background-color: #18a0fb;
 }
 
 .icon--selected:active {
-  color: #ffffff;
+  color: #fff;
   background-color: #18a0fb;
 }
 
@@ -1619,98 +1619,87 @@
 </style>
 
 <style>
-  .direction{
-    display:flex;
-    align-items: center;
-    justify-content: space-between;
-    padding:0px;
-    margin-top:-4px;
-    margin-bottom:8px;
-  }
-  .direction section{
-    display:flex;
-  }
-  .direction .icon{
-    margin-left:4px;
-  }
-  .spacing{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top:12px;
-    margin-bottom:12px;
-  }
-  .spacing p{
-    display: flex;
-    align-items: center;
-    font-family: "Inter", sans-serif;
-    font-weight: 400;
-    font-size: 11px;
-    line-height: 16px;
-    letter-spacing: 0.005em;
-  }
-  .divider{
-    margin:12px 0px 12px -16px;
-    width:100vw;
-  }
+  /* Custom CSS */
   html,body{
     padding:8px;
-    margin:0px;
+    margin:0;
   }
+
+  .divider{
+    margin:14px 0px 14px -16px;
+    width:100vw;
+  }
+
+  .distributeMode{
+    display:flex;
+    justify-content: space-between
+  }
+
+  .distributeMode div>div{
+    display:flex;
+  }
+
+  .icon:first-child{
+    margin: 0 4px 0 0;
+  }
+
   .label{
-    margin: 0px 0px 0px 0px;
-    padding:0px;
-    opacity:1;
-    font-weight: 400;
+    margin: -4px 0px 8px 0px;
+    padding:0;
+    font-weight: 500;
     color:#000;
     height:max-content;
   }
+
   .label span{
-    margin-left:4px;
+    margin-left:2px;
     opacity:0.3;
-    font-weight: 400;
   }
+
   .CTAs{
     margin-top:4px;
     display:flex;
     flex-direction: row-reverse;
+    justify-content: space-between;
   }
+
   .CTAs button{
-    width:calc(50% - 4px);
+    width:calc(50% - 8px);
   }
-  #submit{
-    margin-left:8px;
-  }
-  .input{
-    margin-top:0;
-    width:68px;
-    text-align: right;
-    padding:4px 8px 4px 8px;
-    font-size:14px;
-  }
+
   .checkbox{
     width:100vw;
-    margin-left:-16px;
-    padding:0px 8px 8px 8px;
+    margin:0 0 -8px -16px;
+    padding:0 8px 0 8px;
   }
 
 </style>
-<div class="direction">
-    <label class="label">Direction</label>
-    <section>
-      <div class="icon icon--dist-horiz-spacing icon--button icon--adjust"></div>
-      <div class="icon icon--dist-vert-spacing icon--button icon--adjust"></div>
-    </section>
-</div>
+<section class="distributeMode">
+  <div class="direction">
+      <label class="label">Direction</label>
+      <div>
+        <div class="icon icon--button icon--adjust icon--arrow-left-right" data-axis="x"></div>
+        <div class="icon icon--button icon--adjust icon--arrow-up-down" data-axis="y"></div>
+      </div>
+  </div>
+  <div class="alignment">
+    <label class="label">Alignment</label>
+    <div>
+      <div class="icon icon--button icon--adjust icon--layout-align-left" data-order="asc"></div>
+      <div class="icon icon--button icon--adjust icon--layout-align-right" data-order="desc"></div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
 <div class="spacing">
-  <label class="label pos-small-normal">Spacing <span>(PX)</span></label>
+  <label class="label pos-small-normal">Spacing<span>(px)</span></label>
   <input type="input" class="input" id="distance" placeholder="0" value=0 autofocus>
 </div>
-<div class="divider"></div>
 <div class="checkbox">
   <input class="checkbox__box" type="checkbox" id="fromCenter">
-  <label class="checkbox__label" for="fromCenter">Distribute from center.</label>
+  <label class="checkbox__label" for="fromCenter">Space between centers.</label>
 </div>	
+<div class="divider"></div>
 <div class="CTAs">
   <button class="button button--primary" id="submit">Ok</button>
   <button class="button button--secondary" id="cancel">Cancel</button>
@@ -1718,50 +1707,91 @@
 
 
 <script>
+
+//Global Constants
+const directionButtons = document.querySelectorAll('.direction .icon'),
+alignmentButtons = document.querySelectorAll('.alignment .icon')
+
+//Helper Functions
+const replaceClass = (oldClass, newClass)=>{
+  document.querySelectorAll('.'+oldClass).forEach(e=>{
+    e.classList.replace(oldClass,newClass)
+  })
+},
+ toggleSelected = (el, arr)=>{
+  arr.forEach((e)=>{e.classList.remove('icon--selected')})
+  el.classList.add('icon--selected')
+}
+
 //Preloads Previous Config  
 onmessage = (event) => {
   if(event.data.pluginMessage){
     // console.log("got this from the plugin code", event.data.pluginMessage)
+    const iconDirection = (event.data.pluginMessage.axis === 'x') ? '.icon:first-child' : '.icon:last-child'
+    const iconAlignment = (event.data.pluginMessage.order === 'asc') ? '.icon:first-child' : '.icon:last-child'
+
+    document.querySelector('.direction '+iconDirection).classList.add('icon--selected')
+    document.querySelector('.alignment '+iconAlignment).classList.add('icon--selected')
+
+    if(event.data.pluginMessage.axis === 'x'){
+      replaceClass('icon--layout-align-top','icon--layout-align-left')
+      replaceClass('icon--layout-align-bottom','icon--layout-align-right')
+    }else{
+      replaceClass('icon--layout-align-left','icon--layout-align-top')
+      replaceClass('icon--layout-align-right','icon--layout-align-bottom')
+    }
+
     document.querySelector('#distance').value = event.data.pluginMessage.amount
-    const iconDirection = (event.data.pluginMessage.axis === 'x') ? 'icon--dist-horiz-spacing' : 'icon--dist-vert-spacing'
-    document.querySelector('.'+iconDirection).classList.add('icon--selected')
     document.querySelector('#fromCenter').checked = event.data.pluginMessage.fromCenter
   }else{
-    document.querySelector('.icon--dist-horiz-spacing').classList.add('icon--selected')
+    document.querySelectorAll('.icon:first-child').forEach(e =>{
+      e.classList.add('icon--selected')
+    })
   }
-}
-//Handles Direction Select Styles
-let directionButtons = document.querySelectorAll('.direction .icon')
-directionButtons.forEach((e)=>{
-  e.addEventListener('click', ()=>{
-    directionButtons.forEach((e)=>{e.classList.remove('icon--selected')})
-    e.classList.add('icon--selected')
-  })
-})
-//Handles Submit
-document.getElementById('submit').onclick = () => {
-  const textbox = document.querySelector('#distance');
-  const selectedDirection = document.querySelector('.direction .icon--selected')
-  const axis = (selectedDirection.classList.contains('icon--dist-horiz-spacing')) ? 'x' : 'y'
-  const fromCenter = document.querySelector('#fromCenter').checked
-  let config = {
-    'axis':axis,
-    'amount':parseInt(textbox.value, 10),
-    'fromCenter':fromCenter
-  }
-  parent.postMessage({ pluginMessage: { type: 'distance', config } }, '*')
+
 }
 
+//Direction and Alignment Click Events
+directionButtons.forEach((e)=>{
+  e.addEventListener('click', ()=>{
+    if(e.dataset.axis === 'x'){
+      replaceClass('icon--layout-align-top','icon--layout-align-left')
+      replaceClass('icon--layout-align-bottom','icon--layout-align-right')
+    }else{
+      replaceClass('icon--layout-align-left','icon--layout-align-top')
+      replaceClass('icon--layout-align-right','icon--layout-align-bottom')
+    }
+    toggleSelected(e,directionButtons)
+  })
+})
+alignmentButtons.forEach((e)=>{
+  e.addEventListener('click', ()=>{
+    toggleSelected(e,alignmentButtons)
+  })
+})
+
+//Submit Click Event
+document.getElementById('submit').onclick = () => {
+  let config = {
+    'axis':document.querySelector('.direction .icon--selected').dataset.axis,
+    'order':document.querySelector('.alignment .icon--selected').dataset.order,
+    'amount':parseInt((document.querySelector('#distance').value) || 0, 10),
+    'fromCenter':document.querySelector('#fromCenter').checked
+  }
+
+  parent.postMessage({ pluginMessage: { type: 'distribute-submit', config } }, '*')
+
+}
+
+//'Enter' key to trigger submit click event
 document.addEventListener("keyup", function(event) {
-  // Number 13 is the "Enter" key on the keyboard
   if (event.keyCode === 13) {
-    // Cancel the default action, if needed
     event.preventDefault();
-    // Trigger the button element with a click
     document.getElementById("submit").click();
   }
 });
 
+//Cancel Click Event
 document.getElementById('cancel').onclick = () => {
   parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
 }

@@ -1,13 +1,9 @@
 // After selecting items, this plugin will open a modal to prompt the user to enter a 
 // number (px) and orientation and modify the space between selections accordingly.
-// This file holds the main code for the plugins. It has access to the *document*.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser enviroment (see documentation).
 // Helper Function: Reorder Array of Objects based on Object Value
 const compareValues = (key, order = 'asc') => {
     return function (a, b) {
         if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
-            // property doesn't exist on either object
             return 0;
         }
         const varA = (typeof a[key] === 'string') ?
@@ -58,21 +54,28 @@ function getRectFourPoints(x, y, width, height, ang) {
     points.offset.y = y - points.bounding.y;
     return points;
 }
-let init = () => {
+// Main Function
+(() => {
+    // Only inits when there are multiple selections
     if (figma.currentPage.selection.length > 1) {
+        // Gets saved config from previous session
         figma.clientStorage.getAsync('distribute_by').then((res) => {
             figma.ui.postMessage(res);
         });
-        figma.showUI(__html__, { width: 200, height: 200 });
+        // Render UI
+        figma.showUI(__html__, { width: 184, height: 252 });
+        // Executes when user submits input
         figma.ui.onmessage = (msg) => {
-            if (msg.type === 'distance') {
-                figma.clientStorage.setAsync('distribute_by', msg.config);
-                // console.log(msg.config)
-                let counter = 0;
-                let ifCenter = (msg.config.fromCenter) ? .5 : 1;
-                let nodesSorted = [];
+            if (msg.type === 'distribute-submit') {
+                //Global Constants
+                const config = msg.config, ifCenter = (config.fromCenter) ? .5 : 1;
+                //Global variables
+                let counter = 0, nodesSorted = [];
+                //Saves user config
+                figma.clientStorage.setAsync('distribute_by', config);
+                //Take current selections and sort by asc or desc
                 figma.currentPage.selection.forEach(e => {
-                    const calc = getRectFourPoints(e.x, e.y, e.width, e.height, e.rotation);
+                    let calc = getRectFourPoints(e.x, e.y, e.width, e.height, e.rotation);
                     nodesSorted.push({
                         id: e.id,
                         x: calc.bounding.x,
@@ -83,17 +86,22 @@ let init = () => {
                         node: e
                     });
                 });
-                nodesSorted.sort(compareValues(msg.config.axis));
+                nodesSorted.sort(compareValues(msg.config.axis, msg.config.order));
                 if (nodesSorted.length > 0) {
                     nodesSorted.forEach((e, i) => {
                         let nodeBoundingDim = (msg.config.axis === 'x') ? e.width : e.height;
+                        let nextBoundingDim = (msg.config.axis === 'x' && nodesSorted.length > i + 1) ? nodesSorted[i + 1].width
+                            : (msg.config.axis === 'y' && nodesSorted.length > i + 1) ? nodesSorted[i + 1].height
+                                : 0;
                         if (i === 0) {
                             let startCoor = e[msg.config.axis];
-                            counter += startCoor + (nodeBoundingDim * ifCenter) + msg.config.amount;
+                            counter = (msg.config.order === 'asc') ? counter + startCoor + (nodeBoundingDim * ifCenter) + msg.config.amount
+                                : counter + startCoor - msg.config.amount - (nextBoundingDim * ifCenter);
                         }
                         else {
-                            e.node[msg.config.axis] = counter + e.offset[msg.config.axis];
-                            counter += msg.config.amount + (nodeBoundingDim * ifCenter);
+                            e.node[msg.config.axis] = counter + e.offset[msg.config.axis]; //Modifies node coordinates
+                            counter = (msg.config.order === 'asc') ? counter + msg.config.amount + (nodeBoundingDim * ifCenter)
+                                : counter - msg.config.amount - (nextBoundingDim * ifCenter);
                         }
                     });
                 }
@@ -108,5 +116,4 @@ let init = () => {
         figma.notify('Select multiple items to distribute.');
         figma.closePlugin();
     }
-};
-init();
+})();
