@@ -1,5 +1,5 @@
 # **Distributor**: A Figma Plugin
-![Animation of Distributor plugin](https://yeemachine.github.io/distributor/Cover_anim.gif)
+![Animation of Distributor plugin](https://yeemachine.github.io/distributor/assets/Cover_anim.gif)
 
 A lightweight plugin for Figma that spaces elements evenly by exact pixel measurements.
  
@@ -7,4 +7,4 @@ You can space items vertically or horizontally from their edges or their centers
 
 [Install the Plugin](https://www.figma.com/c/plugin/761098431161143653/Distributor)
 
-![Close up of spacing](https://yeemachine.github.io/distributor/measuring.gif)
+![Close up of spacing](https://yeemachine.github.io/distributor/assets/measuring.gif)
