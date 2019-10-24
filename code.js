@@ -1,5 +1,6 @@
-// After selecting items, this plugin will open a modal to prompt the user to enter a 
-// number (px) and orientation and modify the space between selections accordingly.
+// A Distributor Plugin for Figma
+// Richard Yee
+// https://yee.gd
 // Helper Function: Reorder Array of Objects based on Object Value
 const compareValues = (key, order = 'asc') => {
     return function (a, b) {
