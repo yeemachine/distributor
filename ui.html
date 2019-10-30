@@ -1725,6 +1725,7 @@ const replaceClass = (oldClass, newClass)=>{
 
 //Preloads Previous Config  
 onmessage = (event) => {
+
   if(event.data.pluginMessage){
     // console.log("got this from the plugin code", event.data.pluginMessage)
     const iconDirection = (event.data.pluginMessage.axis === 'x') ? '.icon:first-child' : '.icon:last-child'
@@ -1748,12 +1749,15 @@ onmessage = (event) => {
       e.classList.add('icon--selected')
     })
   }
+  
+  document.querySelector('#distance').select();
 
 }
 
 //Direction and Alignment Click Events
 directionButtons.forEach((e)=>{
   e.addEventListener('click', ()=>{
+
     if(e.dataset.axis === 'x'){
       replaceClass('icon--layout-align-top','icon--layout-align-left')
       replaceClass('icon--layout-align-bottom','icon--layout-align-right')
