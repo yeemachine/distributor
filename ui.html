@@ -1726,15 +1726,22 @@ const replaceClass = (oldClass, newClass)=>{
 //Preloads Previous Config  
 onmessage = (event) => {
 
-  if(event.data.pluginMessage){
-    // console.log("got this from the plugin code", event.data.pluginMessage)
-    const iconDirection = (event.data.pluginMessage.axis === 'x') ? '.icon:first-child' : '.icon:last-child'
-    const iconAlignment = (event.data.pluginMessage.order === 'asc') ? '.icon:first-child' : '.icon:last-child'
+  if(event){
+    // console.log(event.data.pluginMessage)
+    let iconDirection = (event.data.pluginMessage.axis === 'x') ? '.icon:first-child' 
+                          : (event.data.pluginMessage.axis === 'y') ? '.icon:last-child'
+                          : '.icon:first-child'
+        iconDirection = (event.data.pluginMessage.command === 'x') ? '.icon:first-child' 
+                          : (event.data.pluginMessage.command === 'y') ? '.icon:last-child'
+                          : iconDirection
+    const iconAlignment = (event.data.pluginMessage.order === 'asc') ? '.icon:first-child' 
+                          : (event.data.pluginMessage.order === 'desc') ? '.icon:last-child' 
+                          : '.icon:first-child'
 
     document.querySelector('.direction '+iconDirection).classList.add('icon--selected')
     document.querySelector('.alignment '+iconAlignment).classList.add('icon--selected')
 
-    if(event.data.pluginMessage.axis === 'x'){
+    if(iconDirection === '.icon:first-child'){
       replaceClass('icon--layout-align-top','icon--layout-align-left')
       replaceClass('icon--layout-align-bottom','icon--layout-align-right')
     }else{
@@ -1742,12 +1749,9 @@ onmessage = (event) => {
       replaceClass('icon--layout-align-right','icon--layout-align-bottom')
     }
 
-    document.querySelector('#distance').value = event.data.pluginMessage.amount
+    document.querySelector('#distance').value = (event.data.pluginMessage.amount) ? event.data.pluginMessage.amount : 0
     document.querySelector('#fromCenter').checked = event.data.pluginMessage.fromCenter
   }else{
-    document.querySelectorAll('.icon:first-child').forEach(e =>{
-      e.classList.add('icon--selected')
-    })
   }
   
   document.querySelector('#distance').select();

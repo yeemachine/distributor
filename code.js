@@ -60,8 +60,12 @@ function getRectFourPoints(x, y, width, height, ang) {
     // Only inits when there are multiple selections
     if (figma.currentPage.selection.length > 1) {
         // Gets saved config from previous session
-        figma.clientStorage.getAsync('distribute_by').then((res) => {
+        figma.clientStorage.getAsync('distributor').then((res) => {
+            res.command = figma.command;
             figma.ui.postMessage(res);
+        }).catch(err => {
+            console.log(err);
+            figma.ui.postMessage({ 'command': figma.command });
         });
         // Render UI
         figma.showUI(__html__, { width: 190, height: 268 });
@@ -73,7 +77,7 @@ function getRectFourPoints(x, y, width, height, ang) {
                 //Global variables
                 let counter = 0, nodesSorted = [];
                 //Saves user config
-                figma.clientStorage.setAsync('distribute_by', config);
+                figma.clientStorage.setAsync('distributor', config);
                 //Take current selections and sort by asc or desc
                 figma.currentPage.selection.forEach(e => {
                     let calc = getRectFourPoints(e.x, e.y, e.width, e.height, e.rotation);

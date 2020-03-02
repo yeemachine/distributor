@@ -3,5 +3,11 @@
   "id": "761098431161143653",
   "api": "1.0.0",
   "main": "code.js",
-  "ui": "ui.html"
+  "ui": "ui.html",
+  "menu": [
+    {"name": "Distribute X/Y", "command": "x&y"},
+    {"separator": true},
+    {"name": "Distribute X", "command": "x"},
+    {"name": "Distribute Y", "command": "y"}
+  ]
 }
