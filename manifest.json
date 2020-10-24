@@ -7,7 +7,8 @@
   "menu": [
     {"name": "Distribute X/Y", "command": "x&y"},
     {"separator": true},
+    {"name": "Repeat Distribute", "command": "repeat"},
     {"name": "Distribute X", "command": "x"},
-    {"name": "Distribute Y", "command": "y"}
+    {"name": "Distribute Y", "command": "y"}    
   ]
 }

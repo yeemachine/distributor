@@ -60,81 +60,84 @@ function getRectFourPoints(x, y, width, height, ang) {
     points.offset.y = y - points.bounding.y;
     return points;
 }
-// Main Function
+function distribute(amount = 0, axis = "x", order = "asc", fromCenter = false) {
+    if (figma.currentPage.selection.length > 1) {
+        //Global variables
+        let counter = 0, nodesSorted = [];
+        const ifCenter = fromCenter ? 0.5 : 1;
+        //Take current selections and sort by asc or desc
+        figma.currentPage.selection.forEach((e) => {
+            let calc = getRectFourPoints(e.x, e.y, e.width, e.height, e.rotation);
+            nodesSorted.push({
+                id: e.id,
+                x: calc.bounding.x,
+                y: calc.bounding.y,
+                width: calc.bounding.width,
+                height: calc.bounding.height,
+                offset: calc.offset,
+                node: e,
+            });
+        });
+        nodesSorted.sort(compareValues(axis, order));
+        nodesSorted.forEach((e, i) => {
+            let nodeBoundingDim = axis === "x" ? e.width : e.height;
+            let nextBoundingDim = axis === "x" && nodesSorted.length > i + 1
+                ? nodesSorted[i + 1].width
+                : axis === "y" && nodesSorted.length > i + 1
+                    ? nodesSorted[i + 1].height
+                    : 0;
+            if (i === 0) {
+                let startCoor = e[axis];
+                counter =
+                    order === "asc"
+                        ? counter + startCoor + nodeBoundingDim * ifCenter + amount
+                        : counter + startCoor - amount - nextBoundingDim * ifCenter;
+            }
+            else {
+                e.node[axis] = counter + e.offset[axis]; //Modifies node coordinates
+                counter =
+                    order === "asc"
+                        ? counter + amount + nodeBoundingDim * ifCenter
+                        : counter - amount - nextBoundingDim * ifCenter;
+            }
+        });
+    }
+    else {
+        figma.notify("Select multiple items to distribute.");
+    }
+}
+// Init
 (() => {
     // Gets saved config from previous session
     figma.clientStorage
         .getAsync("distributor")
         .then((res) => {
-        res.command = figma.command;
-        figma.ui.postMessage(res);
+        res = res ? res : { command: figma.command };
+        if (figma.command === "repeat") {
+            distribute(res.amount, res.axis, res.order, res.fromCenter);
+            figma.closePlugin();
+        }
+        else {
+            figma.ui.postMessage(res);
+        }
     })
         .catch((err) => {
         console.log(err);
         figma.ui.postMessage({ command: figma.command });
     });
     // Render UI
-    figma.showUI(__html__, { width: 190, height: 268 });
+    if (figma.command !== "repeat") {
+        figma.showUI(__html__, { width: 190, height: 268 });
+    }
     // Executes when user submits input
     figma.ui.onmessage = (msg) => {
-        console.log(msg);
         if (msg.type === "cancel") {
             figma.closePlugin();
         }
         if (msg.type === "distribute-submit") {
-            if (figma.currentPage.selection.length > 1) {
-                //Global Constants
-                const config = msg.config, ifCenter = config.fromCenter ? 0.5 : 1;
-                //Global variables
-                let counter = 0, nodesSorted = [];
-                //Saves user config
-                figma.clientStorage.setAsync("distributor", config);
-                //Take current selections and sort by asc or desc
-                figma.currentPage.selection.forEach((e) => {
-                    let calc = getRectFourPoints(e.x, e.y, e.width, e.height, e.rotation);
-                    nodesSorted.push({
-                        id: e.id,
-                        x: calc.bounding.x,
-                        y: calc.bounding.y,
-                        width: calc.bounding.width,
-                        height: calc.bounding.height,
-                        offset: calc.offset,
-                        node: e,
-                    });
-                });
-                nodesSorted.sort(compareValues(msg.config.axis, msg.config.order));
-                nodesSorted.forEach((e, i) => {
-                    let nodeBoundingDim = msg.config.axis === "x" ? e.width : e.height;
-                    let nextBoundingDim = msg.config.axis === "x" && nodesSorted.length > i + 1
-                        ? nodesSorted[i + 1].width
-                        : msg.config.axis === "y" && nodesSorted.length > i + 1
-                            ? nodesSorted[i + 1].height
-                            : 0;
-                    if (i === 0) {
-                        let startCoor = e[msg.config.axis];
-                        counter =
-                            msg.config.order === "asc"
-                                ? counter +
-                                    startCoor +
-                                    nodeBoundingDim * ifCenter +
-                                    msg.config.amount
-                                : counter +
-                                    startCoor -
-                                    msg.config.amount -
-                                    nextBoundingDim * ifCenter;
-                    }
-                    else {
-                        e.node[msg.config.axis] = counter + e.offset[msg.config.axis]; //Modifies node coordinates
-                        counter =
-                            msg.config.order === "asc"
-                                ? counter + msg.config.amount + nodeBoundingDim * ifCenter
-                                : counter - msg.config.amount - nextBoundingDim * ifCenter;
-                    }
-                });
-            }
-            else {
-                figma.notify("Select multiple items to distribute.");
-            }
+            //Saves user config
+            figma.clientStorage.setAsync("distributor", msg.config);
+            distribute(msg.config.amount, msg.config.axis, msg.config.order, msg.config.fromCenter);
         }
     };
 })();
