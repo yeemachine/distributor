@@ -118,6 +118,7 @@ function distribute(amount = 0, axis = "x", order = "asc", fromCenter = false) {
             figma.closePlugin();
         }
         else {
+            res.command = figma.command ? figma.command : "x&y";
             figma.ui.postMessage(res);
         }
     })

@@ -131,11 +131,11 @@ function distribute(amount = 0, axis = "x", order = "asc", fromCenter = false) {
     .getAsync("distributor")
     .then((res) => {
       res = res ? res : { command: figma.command };
-
       if (figma.command === "repeat") {
         distribute(res.amount, res.axis, res.order, res.fromCenter);
         figma.closePlugin();
       } else {
+        res.command = figma.command ? figma.command : "x&y"
         figma.ui.postMessage(res);
       }
     })
@@ -143,7 +143,6 @@ function distribute(amount = 0, axis = "x", order = "asc", fromCenter = false) {
       console.log(err);
       figma.ui.postMessage({ command: figma.command });
     });
-
   // Render UI
   if (figma.command !== "repeat") {
     figma.showUI(__html__, { width: 190, height: 268 });
