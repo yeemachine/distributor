@@ -1630,6 +1630,11 @@
     width:100vw;
   }
 
+  .divider2{
+    margin:16px 0px 8px -16px;
+    width:100vw;
+  }
+
   .distributeMode{
     display:flex;
     justify-content: space-between
@@ -1651,13 +1656,17 @@
     height:max-content;
   }
 
+  #leaveOpen{
+    margin: 0px 0px 8px 0px;
+  }
+
   .label span{
     margin-left:2px;
     opacity:0.3;
   }
 
   .CTAs{
-    margin-top:4px;
+    margin-top:16px;
     display:flex;
     flex-direction: row-reverse;
     justify-content: space-between;
@@ -1699,11 +1708,11 @@
   <input class="checkbox__box" type="checkbox" id="fromCenter">
   <label class="checkbox__label" for="fromCenter">Space between centers.</label>
 </div>	
+<div class="divider divider2"></div>
 <div class="checkbox">
   <input class="checkbox__box" type="checkbox" id="leaveOpen">
   <label class="checkbox__label" for="leaveOpen">Leave window open.</label>
 </div>	
-<div class="divider"></div>
 <div class="CTAs">
   <button class="button button--primary" id="submit">Ok</button>
   <button class="button button--secondary" id="cancel">Cancel</button>
