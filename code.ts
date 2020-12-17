@@ -145,7 +145,7 @@ function distribute(amount = 0, axis = "x", order = "asc", fromCenter = false) {
     });
   // Render UI
   if (figma.command !== "repeat") {
-    figma.showUI(__html__, { width: 190, height: 268 });
+    figma.showUI(__html__, { width: 190, height: 298 });
   }
 
   // Executes when user submits input
@@ -162,6 +162,9 @@ function distribute(amount = 0, axis = "x", order = "asc", fromCenter = false) {
         msg.config.order,
         msg.config.fromCenter
       );
+      if(!msg.config.leaveOpen){
+        figma.closePlugin();
+      }
     }
   };
 })();

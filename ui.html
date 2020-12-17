@@ -1699,6 +1699,10 @@
   <input class="checkbox__box" type="checkbox" id="fromCenter">
   <label class="checkbox__label" for="fromCenter">Space between centers.</label>
 </div>	
+<div class="checkbox">
+  <input class="checkbox__box" type="checkbox" id="leaveOpen">
+  <label class="checkbox__label" for="leaveOpen">Leave window open.</label>
+</div>	
 <div class="divider"></div>
 <div class="CTAs">
   <button class="button button--primary" id="submit">Ok</button>
@@ -1751,6 +1755,7 @@ onmessage = (event) => {
 
     document.querySelector('#distance').value = (event.data.pluginMessage.amount) ? event.data.pluginMessage.amount : 0
     document.querySelector('#fromCenter').checked = event.data.pluginMessage.fromCenter
+    document.querySelector('#leaveOpen').checked = event.data.pluginMessage.leaveOpen
   }else{
   }
   
@@ -1784,7 +1789,8 @@ document.getElementById('submit').onclick = () => {
     'axis':document.querySelector('.direction .icon--selected').dataset.axis,
     'order':document.querySelector('.alignment .icon--selected').dataset.order,
     'amount':parseInt((document.querySelector('#distance').value) || 0, 10),
-    'fromCenter':document.querySelector('#fromCenter').checked
+    'fromCenter':document.querySelector('#fromCenter').checked,
+    'leaveOpen':document.querySelector('#leaveOpen').checked
   }
 
   parent.postMessage({ pluginMessage: { type: 'distribute-submit', config } }, '*')
